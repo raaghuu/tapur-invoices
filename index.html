@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice Studio - Interactive Invoice Generator</title>
+  <meta name="description" content="Generate pixel-perfect professional invoices matching the clean GST reference template with direct live on-page editing.">
+  
+  <!-- Modern Clean Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/invoice.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="app-topbar non-printable">
+    <div class="brand-section">
+      <button type="button" class="btn btn-secondary btn-icon-only sidebar-toggle-btn" id="btn-toggle-sidebar" title="Toggle Sidebar">
+        ☰
+      </button>
+      <div class="brand-icon">₹</div>
+      <div class="brand-title">
+        Invoice Studio
+        <span class="brand-badge">All Fields Editable</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <!-- Preset Dropdown -->
+      <select class="form-select" id="preset-select" style="width: auto; padding: 6px 12px; font-weight: 500;">
+        <option value="default">📋 Reference Template (Tapur Sharma)</option>
+        <option value="developer">💻 Tech / Developer Template</option>
+        <option value="blank">📄 Clean Blank Template</option>
+      </select>
+
+      <a href="history.html" class="btn btn-secondary" id="nav-history-btn" title="View all saved invoices" style="text-decoration: none;">
+        📋 Invoices History
+        <span id="history-count-badge" class="brand-badge" style="background:#0f172a; color:#ffffff; font-size:10px; padding:1px 6px;">1</span>
+      </a>
+
+      <button type="button" class="btn btn-secondary" id="btn-save-history" title="Save current invoice into history archive">
+        💾 Save to History
+      </button>
+
+      <button type="button" class="btn btn-secondary" id="btn-reset" title="Reset to original reference">
+        ↺ Reset
+      </button>
+
+      <button type="button" class="btn btn-secondary" id="btn-import-json" title="Import or Export JSON">
+        ⇄ JSON
+      </button>
+
+      <button type="button" class="btn btn-secondary" id="btn-export-json" title="Download JSON file">
+        ↓ Backup
+      </button>
+
+      <!-- Prominent Print / PDF Button -->
+      <button type="button" class="btn btn-primary" id="btn-print" title="Print or Save as PDF (Auto-saves to History)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        Print / Save PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE VIEW SWITCHER (Visible on Mobile & Tablets) -->
+  <div class="mobile-view-tabs non-printable">
+    <button type="button" class="mobile-tab-btn active" id="btn-show-form">
+      ✏️ Edit Form
+    </button>
+    <button type="button" class="mobile-tab-btn" id="btn-show-preview">
+      👁️ Invoice Sheet
+    </button>
+  </div>
+
+  <!-- MAIN TWO-COLUMN APPLICATION LAYOUT -->
+  <div class="app-layout view-form" id="app-layout">
+
+    <!-- LEFT SIDEBAR: CONTROL & FORM PANEL -->
+    <aside class="app-sidebar non-printable" id="app-sidebar">
+      <div class="sidebar-tabs">
+        <button type="button" class="tab-btn active" data-tab="details">📄 Details</button>
+        <button type="button" class="tab-btn" data-tab="parties">👥 Parties</button>
+        <button type="button" class="tab-btn" data-tab="items">📦 Items</button>
+        <button type="button" class="tab-btn" data-tab="taxes">💰 Taxes</button>
+        <button type="button" class="tab-btn" data-tab="bank">🏦 Bank</button>
+      </div>
+
+      <div class="sidebar-content">
+        <form id="sidebar-form" onsubmit="return false;">
+
+          <!-- TAB 1: INVOICE DETAILS -->
+          <div class="tab-panel active" id="tab-details">
+            <div class="form-section">
+              <div class="form-section-title">Invoice Metadata</div>
+              
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Document Title</label>
+                  <input type="text" class="form-input" data-model="meta.title">
+                </div>
+                <div>
+                  <label class="form-label">Invoice Number</label>
+                  <input type="text" class="form-input" data-model="meta.invoiceNo">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Invoice Date</label>
+                  <input type="text" class="form-input" data-model="meta.invoiceDate" placeholder="e.g. 26 Oct 2026">
+                </div>
+                <div>
+                  <label class="form-label">Due Date (Optional)</label>
+                  <input type="text" class="form-input" data-model="meta.dueDate" placeholder="e.g. 10 Nov 2026">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Currency Code</label>
+                  <input type="text" class="form-input" data-model="meta.currency" placeholder="INR">
+                </div>
+                <div>
+                  <label class="form-label">Currency Symbol</label>
+                  <input type="text" class="form-input" data-model="meta.currencySymbol" placeholder="Rs. or ₹">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">Footer & Notes</div>
+              <div class="form-group">
+                <label class="form-label">Bottom Disclaimer / Note</label>
+                <textarea class="form-textarea" data-model="disclaimer" rows="2"></textarea>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Footer Left Text</label>
+                  <input type="text" class="form-input" data-model="footer.leftText">
+                </div>
+                <div>
+                  <label class="form-label">Footer Right Text</label>
+                  <input type="text" class="form-input" data-model="footer.rightText">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: PARTIES (SELLER & CLIENT) -->
+          <div class="tab-panel" id="tab-parties">
+            <!-- SELLER (YOUR DETAILS) -->
+            <div class="form-section">
+              <div class="form-section-title">Issuer / Freelancer (Top Left)</div>
+              
+              <div class="form-group">
+                <label class="form-label">Your Name / Business Name</label>
+                <input type="text" class="form-input" data-model="seller.name" style="font-weight: 700;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Complete Address</label>
+                <textarea class="form-textarea" data-model="seller.address" rows="2"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">PAN Number</label>
+                  <input type="text" class="form-input" data-model="seller.pan">
+                </div>
+                <div>
+                  <label class="form-label">GSTIN / Status</label>
+                  <input type="text" class="form-input" data-model="seller.gstin">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Email Address</label>
+                  <input type="email" class="form-input" data-model="seller.email">
+                </div>
+                <div>
+                  <label class="form-label">Phone Number</label>
+                  <input type="text" class="form-input" data-model="seller.phone">
+                </div>
+              </div>
+            </div>
+
+            <!-- CLIENT (BILL TO) -->
+            <div class="form-section">
+              <div class="form-section-title">Client / Buyer (Bill To)</div>
+              
+              <div class="form-group">
+                <label class="form-label">Card Header Title</label>
+                <input type="text" class="form-input" data-model="client.cardTitle" value="BILL TO">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Client Company / Person Name</label>
+                <input type="text" class="form-input" data-model="client.name" style="font-weight: 700;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Client Address</label>
+                <textarea class="form-textarea" data-model="client.address" rows="3"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">Client GSTIN</label>
+                  <input type="text" class="form-input" data-model="client.gstin">
+                </div>
+                <div>
+                  <label class="form-label">Client Email / Phone</label>
+                  <input type="text" class="form-input" data-model="client.email">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: LINE ITEMS -->
+          <div class="tab-panel" id="tab-items">
+            <div class="form-section">
+              <div class="form-section-title">
+                Line Items
+                <button type="button" class="btn btn-sm btn-secondary" id="btn-add-item-sidebar">
+                  + Add Item
+                </button>
+              </div>
+              <div id="sidebar-items-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: TAXES & TOTALS -->
+          <div class="tab-panel" id="tab-taxes">
+            <div class="form-section">
+              <div class="form-section-title">GST / Tax Configuration</div>
+              
+              <div class="form-group">
+                <label class="form-label">Tax Calculation Mode</label>
+                <select class="form-select" data-model="taxSettings.mode">
+                  <option value="exempt">Reference Style: Show 0.00% lines (Unregistered / Exempt)</option>
+                  <option value="calculate">Auto-Calculate (Subtotal × Tax %)</option>
+                  <option value="custom">Manual Exact Tax Amounts</option>
+                </select>
+                <div class="form-hint">
+                  The original attached invoice is non-registered, displaying IGST 18%, CGST 9%, and SGST 9% with 0.00 values.
+                </div>
+              </div>
+
+              <!-- IGST -->
+              <div class="tax-option-card">
+                <div class="tax-option-header">
+                  <label class="tax-checkbox-label">
+                    <input type="checkbox" data-model="taxSettings.igst.enabled">
+                    Enable IGST
+                  </label>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" class="form-input" style="width: 70px; padding: 4px 6px;" data-model="taxSettings.igst.rate">
+                    <span style="font-size: 13px; font-weight: 600;">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CGST -->
+              <div class="tax-option-card">
+                <div class="tax-option-header">
+                  <label class="tax-checkbox-label">
+                    <input type="checkbox" data-model="taxSettings.cgst.enabled">
+                    Enable CGST
+                  </label>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" class="form-input" style="width: 70px; padding: 4px 6px;" data-model="taxSettings.cgst.rate">
+                    <span style="font-size: 13px; font-weight: 600;">%</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SGST -->
+              <div class="tax-option-card">
+                <div class="tax-option-header">
+                  <label class="tax-checkbox-label">
+                    <input type="checkbox" data-model="taxSettings.sgst.enabled">
+                    Enable SGST
+                  </label>
+                  <div style="display: flex; align-items: center; gap: 4px;">
+                    <input type="number" class="form-input" style="width: 70px; padding: 4px 6px;" data-model="taxSettings.sgst.rate">
+                    <span style="font-size: 13px; font-weight: 600;">%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section-title">Amount in Words</div>
+              <div class="form-group">
+                <label class="tax-checkbox-label" style="margin-bottom: 8px;">
+                  <input type="checkbox" data-model="amountInWords.auto">
+                  Automatically convert total to Indian English words
+                </label>
+                <textarea class="form-textarea" data-model="amountInWords.text" rows="2"></textarea>
+                <div class="form-hint">Supports Indian currency format (Crores, Lakhs, Thousands, Rupees, and Paise).</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: BANK DETAILS -->
+          <div class="tab-panel" id="tab-bank">
+            <div class="form-section">
+              <div class="form-section-title">Bank Details for Payment</div>
+
+              <div class="form-group">
+                <label class="form-label">Card Header Title</label>
+                <input type="text" class="form-input" data-model="bank.cardTitle" value="BANK DETAILS FOR PAYMENT">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Account Holder Name</label>
+                <input type="text" class="form-input" data-model="bank.accountHolder">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Account Number & Type</label>
+                <input type="text" class="form-input" data-model="bank.accountNo" placeholder="e.g. 38372877099 (Savings)">
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label class="form-label">IFSC Code</label>
+                  <input type="text" class="form-input" data-model="bank.ifsc">
+                </div>
+                <div>
+                  <label class="form-label">Bank & Branch</label>
+                  <input type="text" class="form-input" data-model="bank.bankBranch">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">UPI ID / VPA (Optional)</label>
+                <input type="text" class="form-input" data-model="bank.upiId" placeholder="e.g. yourname@okaxis">
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </aside>
+
+    <!-- RIGHT WORKSPACE: LIVE INTERACTIVE A4 CANVAS -->
+    <main class="preview-area" id="preview-area">
+      
+      <!-- STICKY CANVAS TOOLBAR -->
+      <div class="preview-toolbar non-printable">
+        <div class="canvas-status" id="save-status-indicator">
+          <span class="status-dot"></span> Saved to browser
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div class="zoom-controls">
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-zoom-out" title="Zoom out">-</button>
+          <span class="zoom-level-text" id="zoom-level-text">100%</span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-zoom-in" title="Zoom in">+</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btn-zoom-fit" title="Reset Zoom">Fit</button>
+        </div>
+
+        <div class="toolbar-divider"></div>
+
+        <div style="font-size: 12px; color: #475569; font-weight: 500; display: flex; align-items: center; gap: 4px;">
+          <span>💡</span> <span>Click <b>any field</b> on the invoice below to edit directly</span>
+        </div>
+      </div>
+
+      <!-- A4 PAPER CANVAS WRAPPER -->
+      <div class="preview-canvas-wrapper" id="preview-canvas-wrapper">
+        <div class="invoice-sheet" id="invoice-sheet">
+          <!-- Dynamically rendered pixel-perfect invoice -->
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- JSON IMPORT / EXPORT MODAL -->
+  <div class="modal-overlay non-printable" id="json-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Invoice Data (JSON)</h3>
+        <button type="button" class="modal-close-btn" id="btn-close-json">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">
+          Copy this JSON to backup your invoice, or paste external invoice JSON to load it.
+        </p>
+        <textarea class="form-textarea" id="json-textarea" style="height: 260px; font-family: monospace; font-size: 12px;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('json-modal').classList.remove('open')">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-apply-json">Load JSON into Editor</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container non-printable" id="toast-container"></div>
+
+  <!-- Application Script (Standalone bundle with zero CORS issues) -->
+  <script src="js/app.bundle.js"></script>
+</body>
+</html>

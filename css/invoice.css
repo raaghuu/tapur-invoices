@@ -1,0 +1,453 @@
+/**
+ * Exact visual representation of the invoice sheet
+ * Matches the reference PDF typography, line weights, spacing, colors and layout.
+ */
+
+.invoice-sheet {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 794px; /* Standard A4 at 96 DPI */
+  min-height: 1123px; /* Standard A4 height */
+  margin: 0 auto;
+  background-color: #ffffff;
+  color: #111827;
+  padding: 48px 50px 40px 50px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 1.45;
+}
+
+/* Header Section */
+.inv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.inv-seller-info {
+  flex: 1;
+}
+
+.inv-seller-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+}
+
+.inv-seller-address {
+  font-size: 13px;
+  color: #334155;
+  margin: 0 0 3px 0;
+  white-space: pre-line;
+}
+
+.inv-seller-tax-info {
+  font-size: 13px;
+  color: #1e293b;
+  margin: 0 0 3px 0;
+}
+
+.inv-seller-contact {
+  font-size: 13px;
+  color: #334155;
+  margin: 0;
+}
+
+.inv-label-bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Header Right - Title and Meta Box */
+.inv-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 240px;
+}
+
+.inv-main-title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+}
+
+.inv-meta-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  padding: 10px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inv-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.inv-meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.inv-meta-label {
+  color: #475569;
+  font-weight: 500;
+}
+
+.inv-meta-val {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Horizontal Thick Divider */
+.inv-top-divider {
+  height: 2.5px;
+  background-color: #0f172a;
+  margin: 20px 0 22px 0;
+  width: 100%;
+}
+
+/* BILL TO Box */
+.inv-bill-to-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.inv-bill-to-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #475569;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.inv-client-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+
+.inv-client-address {
+  font-size: 13px;
+  color: #334155;
+  white-space: pre-line;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.inv-client-gstin {
+  font-size: 13px;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.inv-client-contact {
+  font-size: 13px;
+  color: #334155;
+}
+
+/* Items Table */
+.inv-table-wrapper {
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.inv-table thead tr {
+  background-color: #0b192c; /* Deep midnight navy from reference */
+  color: #ffffff;
+}
+
+.inv-table th {
+  padding: 10px 14px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  border: none;
+}
+
+.inv-col-idx {
+  width: 44px;
+  text-align: center !important;
+}
+
+.inv-col-desc {
+  /* Takes remaining space */
+}
+
+.inv-col-sac {
+  width: 90px;
+  text-align: center !important;
+}
+
+.inv-col-amt {
+  width: 140px;
+  text-align: right !important;
+  padding-right: 18px !important;
+}
+
+.inv-col-action {
+  width: 36px;
+  text-align: center !important;
+}
+
+.inv-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.inv-table tbody td {
+  padding: 14px;
+  font-size: 13px;
+  color: #1e293b;
+  vertical-align: top;
+}
+
+.inv-item-desc {
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.inv-item-desc-title {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.inv-table td.inv-col-idx {
+  text-align: center;
+  font-weight: 600;
+  color: #334155;
+}
+
+.inv-table td.inv-col-sac {
+  text-align: center;
+  color: #475569;
+}
+
+.inv-table td.inv-col-amt {
+  text-align: right;
+  font-weight: 500;
+  padding-right: 18px;
+  color: #0f172a;
+}
+
+/* Totals Summary Area */
+.inv-calculation-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 22px;
+}
+
+.inv-totals-box {
+  width: 320px;
+}
+
+.inv-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 13px;
+  color: #334155;
+}
+
+.inv-total-row.tax-row {
+  color: #475569;
+}
+
+.inv-total-val {
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
+}
+
+.inv-grand-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1.8px solid #0f172a;
+  border-bottom: 1.8px solid #0f172a;
+  padding: 8px 0;
+  margin-top: 6px;
+}
+
+.inv-grand-total-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.inv-grand-total-val {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Amount in words banner */
+.inv-words-banner {
+  background-color: #f1f5f9;
+  border-radius: 4px;
+  padding: 9px 16px;
+  font-size: 13px;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+.inv-words-label {
+  font-weight: 700;
+  color: #0f172a;
+  margin-right: 4px;
+}
+
+/* BANK DETAILS FOR PAYMENT Card */
+.inv-bank-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.inv-bank-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #0f172a;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.inv-bank-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: 8px;
+  column-gap: 20px;
+  font-size: 13px;
+}
+
+.inv-bank-item {
+  color: #334155;
+}
+
+.inv-bank-item .inv-label-bold {
+  color: #0f172a;
+  margin-right: 4px;
+}
+
+/* Disclaimer */
+.inv-disclaimer {
+  text-align: center;
+  font-style: italic;
+  font-size: 12px;
+  color: #64748b;
+  margin: 18px 0 28px 0;
+}
+
+/* Bottom Footer */
+.inv-footer {
+  border-top: 1px solid #cbd5e1;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* Live Editable Styling (Hover and Focus highlights) */
+[contenteditable="true"] {
+  outline: none;
+  transition: background-color 0.15s, box-shadow 0.15s;
+  border-radius: 2px;
+  padding: 1px 3px;
+  margin: -1px -3px;
+  position: relative;
+}
+
+body.editing-active [contenteditable="true"]:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+  cursor: text;
+}
+
+body.editing-active [contenteditable="true"]:focus {
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px #2563eb;
+  z-index: 10;
+}
+
+/* Interactive Table Row Controls */
+.inv-row-delete-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  opacity: 0.3;
+  transition: opacity 0.2s, background-color 0.2s;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.inv-table tbody tr:hover .inv-row-delete-btn {
+  opacity: 1;
+}
+
+.inv-row-delete-btn:hover {
+  background-color: #fee2e2;
+}
+
+.inv-add-item-row {
+  text-align: center;
+  padding: 10px;
+  background-color: #f8fafc;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.inv-btn-add-item-table {
+  background: #ffffff;
+  border: 1px dashed #94a3b8;
+  color: #0284c7;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.inv-btn-add-item-table:hover {
+  border-color: #0284c7;
+  background-color: #f0f9ff;
+}

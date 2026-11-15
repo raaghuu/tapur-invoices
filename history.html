@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice History & Archives - Invoice Studio</title>
+  <meta name="description" content="Track, search, preview, and download previously generated invoices.">
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/invoice.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+
+  <style>
+    /* History Page Specific Enhancements */
+    body.history-page {
+      height: auto;
+      min-height: 100vh;
+      overflow-y: auto;
+      background-color: #f1f5f9;
+    }
+
+    .history-container {
+      max-width: 1140px;
+      margin: 32px auto 60px auto;
+      padding: 0 20px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .history-title-group h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .history-title-group p {
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    /* Summary Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: #10b981;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Filter & Search Bar */
+    .history-controls-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-input-wrap {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      font-size: 13px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      background-color: #f8fafc;
+    }
+
+    .search-input-wrap svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Table */
+    .history-table-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .history-table thead tr {
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .history-table th {
+      padding: 12px 18px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .history-table tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.15s ease;
+    }
+
+    .history-table tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .history-table td {
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+
+    .invoice-id-badge {
+      font-weight: 700;
+      color: #0f172a;
+      font-family: monospace;
+      font-size: 13px;
+    }
+
+    .client-cell-name {
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+
+    .client-cell-email {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .amount-cell {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 14px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-generated {
+      background-color: #e0f2fe;
+      color: #0284c7;
+    }
+
+    .badge-paid {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+
+    .badge-pending {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .action-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+
+    .action-btn-primary {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: #ffffff;
+    }
+
+    .action-btn-primary:hover {
+      background: #1e293b;
+      color: #ffffff;
+    }
+
+    .action-btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    /* Quick View Preview Modal */
+    .preview-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .preview-modal-overlay.open {
+      display: flex;
+    }
+
+    .preview-modal-content {
+      background: #e2e8f0;
+      border-radius: var(--radius-lg);
+      max-width: 860px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+      position: relative;
+    }
+
+    .preview-modal-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      background: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+    }
+
+    /* Print container for history print actions */
+    #print-staging-area {
+      display: none;
+    }
+
+    /* Mobile Responsiveness for History Tracker */
+    @media (max-width: 768px) {
+      .history-container {
+        margin: 16px auto 40px auto;
+        padding: 0 12px;
+      }
+      .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .history-controls-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+      .search-input-wrap {
+        min-width: 100%;
+      }
+      .search-input-wrap input {
+        font-size: 16px; /* Prevents auto zoom */
+        min-height: 42px;
+      }
+      .filter-group {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+      }
+      .filter-group select {
+        font-size: 14px;
+        min-height: 40px;
+      }
+
+      /* Card view transformation for mobile table */
+      .history-table thead {
+        display: none;
+      }
+      .history-table,
+      .history-table tbody,
+      .history-table tr,
+      .history-table td {
+        display: block;
+        width: 100%;
+      }
+      .history-table tbody tr {
+        margin-bottom: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: var(--radius-md);
+        background: #ffffff;
+        padding: 14px;
+        box-shadow: var(--shadow-sm);
+      }
+      .history-table td {
+        padding: 6px 0;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .history-table td:before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+      }
+      .table-actions {
+        justify-content: stretch;
+        width: 100%;
+        gap: 6px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+        flex-wrap: wrap;
+      }
+      .table-actions .action-btn {
+        flex: 1 1 calc(50% - 6px);
+        justify-content: center;
+        padding: 9px 8px;
+        font-size: 12.5px;
+      }
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-staging-area,
+      #print-staging-area * {
+        visibility: visible;
+      }
+      #print-staging-area {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body class="history-page">
+
+  <!-- TOP NAVIGATION -->
+  <header class="app-topbar non-printable">
+    <div class="brand-section">
+      <div class="brand-icon">₹</div>
+      <div class="brand-title">
+        Invoice Studio
+        <span class="brand-badge">History & Archives</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <a href="index.html" class="btn btn-secondary">
+        ← Back to Editor
+      </a>
+      <a href="index.html?new=true" class="btn btn-primary">
+        + Create New Invoice
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN HISTORY CONTAINER -->
+  <main class="history-container non-printable">
+    <div class="history-header">
+      <div class="history-title-group">
+        <h1>Generated Invoices Tracker</h1>
+        <p>Review, search, preview, and download previously created invoices</p>
+      </div>
+      <div>
+        <button type="button" class="btn btn-secondary" id="btn-export-all-json">
+          ↓ Export All (JSON)
+        </button>
+      </div>
+    </div>
+
+    <!-- STATS SUMMARY -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Invoices</div>
+        <div class="stat-value" id="stat-total-count">0</div>
+        <div class="stat-sub">Archived in browser</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Amount Invoiced</div>
+        <div class="stat-value" id="stat-total-amount">Rs. 0.00</div>
+        <div class="stat-sub">All generated invoices</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Status Breakdown</div>
+        <div class="stat-value" id="stat-status-summary" style="font-size: 16px; margin-top: 6px;">
+          -
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS & SEARCH -->
+    <div class="history-controls-card">
+      <div class="search-input-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search by Invoice #, Client Name, or Amount...">
+      </div>
+
+      <div class="filter-group">
+        <label style="font-size: 12px; font-weight: 600; color: #475569;">Filter:</label>
+        <select class="form-select" id="status-filter" style="width: auto; padding: 7px 12px;">
+          <option value="all">All Invoices</option>
+          <option value="Generated">Generated</option>
+          <option value="Paid">Paid</option>
+          <option value="Pending">Pending</option>
+        </select>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-clear-history" title="Clear All History">
+          Clear History
+        </button>
+      </div>
+    </div>
+
+    <!-- INVOICES LIST TABLE -->
+    <div class="history-table-card">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Invoice No</th>
+            <th>Date</th>
+            <th>Client</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="history-table-body">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+      <div id="empty-state" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📋</div>
+        <h3 style="font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">No invoices found</h3>
+        <p style="font-size: 13px; margin-bottom: 16px;">Generate your first invoice in the editor to see it tracked here.</p>
+        <a href="index.html" class="btn btn-primary">+ Go to Invoice Editor</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- PREVIEW & DOWNLOAD MODAL -->
+  <div class="preview-modal-overlay non-printable" id="preview-modal">
+    <div class="preview-modal-content">
+      <div class="preview-modal-toolbar">
+        <div style="font-size: 14px; font-weight: 700; color: #0f172a;" id="preview-modal-title">
+          Invoice Preview
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn btn-primary" id="btn-modal-print">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print / Download PDF
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-close-modal">✕ Close</button>
+        </div>
+      </div>
+      <!-- Modal Invoice Target Sheet -->
+      <div id="modal-invoice-sheet" class="invoice-sheet" style="box-shadow: none;"></div>
+    </div>
+  </div>
+
+  <!-- HIDDEN PRINT STAGING AREA FOR DIRECT PRINTING -->
+  <div id="print-staging-area"></div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container non-printable" id="toast-container"></div>
+
+  <!-- Standalone Script for History Tracking -->
+  <script src="js/history-page.bundle.js"></script>
+</body>
+</html>

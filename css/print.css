@@ -1,0 +1,117 @@
+/**
+ * Print & PDF Export Stylesheet
+ * Ensures 100% vector-sharp, pixel-perfect A4 printing identical to the original PDF.
+ */
+
+@media print {
+  /* Hide all app chrome, tools, sidebar, floating action bars, modals */
+  .app-sidebar,
+  .app-topbar,
+  .preview-toolbar,
+  .inv-row-delete-btn,
+  .inv-add-item-row,
+  .inv-col-action,
+  .btn-print,
+  .toast-container,
+  .modal-overlay,
+  .non-printable {
+    display: none !important;
+  }
+
+  /* Reset body and html for clean print */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    font-size: 12pt;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .app-layout {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .preview-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    display: block !important;
+  }
+
+  .preview-canvas-wrapper {
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .invoice-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+  }
+
+  /* Preserve backgrounds and border colors */
+  .inv-table thead tr {
+    background-color: #0b192c !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .inv-table th {
+    color: #ffffff !important;
+  }
+
+  .inv-words-banner {
+    background-color: #f1f5f9 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .inv-meta-card {
+    background-color: #f8fafc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Prevent awkward page breaks */
+  .inv-header,
+  .inv-bill-to-card,
+  .inv-table tr,
+  .inv-calculation-section,
+  .inv-words-banner,
+  .inv-bank-card,
+  .inv-disclaimer,
+  .inv-footer {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure text colors are rich and sharp */
+  .inv-seller-name,
+  .inv-main-title,
+  .inv-client-name,
+  .inv-grand-total-label,
+  .inv-grand-total-val,
+  .inv-label-bold {
+    color: #000000 !important;
+  }
+
+  /* Clean print page setup */
+  @page {
+    size: A4 portrait;
+    margin: 14mm 15mm 12mm 15mm;
+  }
+}
